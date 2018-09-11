@@ -147,8 +147,8 @@ counterExamples n
   | calculateConjeture n = counterExamples (n+1)
   | otherwise = take n primes
 
-doCounterExamples :: [Integer]
-doCounterExamples = counterExamples 2
+doCounterExamples :: Integer
+doCounterExamples = last (counterExamples 2)
 
 -- Exercise 7 (2h without testing)
 intToDigs :: Int->[Int]
@@ -226,4 +226,4 @@ guilty = filter (\x -> length (accusers x) == 3) boys
 -- We know that 2 people are saying lies, and they dont accuse Jack
 -- We know that 3 people said the truth and accused Jack
 honest :: [Boy]
-honest = filter (\x -> accuses x Jack) boys
+honest = filter (\x -> accuses x (head guilty)) boys
