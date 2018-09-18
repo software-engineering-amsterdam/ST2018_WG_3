@@ -62,7 +62,7 @@ testR k n f r = if k == n then print (show n ++ " tests passed")
                  else error ("failed test on: " ++ show xs)
 
 
-{-- Assignment 1 --}
+{---------- Assignment 1 ----------}
 
 testProbs :: Int -> IO [Int]
 testProbs n = do
@@ -73,15 +73,24 @@ testProbs n = do
     fthQ <- return $ filter (\x -> x >= 0.75 && x < 1) results
     return $ map length [fstQ, sndQ, thdQ, fthQ]
     
--- Result: a list of four numbers that are all around 1/4 of n. The higher n, the closer
--- they are (percentually) to the 1/4 point.
+{-|
+  Execution of the method:
+  *Lab2> testProbs 10000
+
+  Result:
+  [2534,2439,2524,2503]
+
+  The result varies each execution, but it is always a list of four numbers that are all around 1/4 of n. 
+  Each of these number represent a quartile of the numbers of to n.
+  The higher the n value gets, the closer the values of the quartiles (percentually) are to the 1/4 point.
+-}
 
 
-{-- Assignment 2 --}
+{---------- Assignment 2 ----------}
 
 isTriangle, isEquilateral, isRectangular, isIsosceles :: Integer -> Integer -> Integer -> Bool
 isTriangle a b c = a+b>=c && a+c>=b && b+c>=a     -- 
-isEquilateral a b c = a == b && b == c         -- The triangle is equilateral if all sides are the same length.
+isEquilateral a b c = a == b && b == c            -- The triangle is equilateral if all sides are the same length.
 isRectangular a b c = a*a+b*b==c*c || b*b+c*c==a*a || a*a+c*c==b*b  -- The triangle is rectangular if Pythagoras' theorem holds.
 isIsosceles a b c = a == b || b == c || a == c  -- The triangle is isosceles if at least two sides are the same length.
 -- The triangle is normal if it is a triangle but none of the other special properties hold.
@@ -171,10 +180,19 @@ runTriangleTests n = do
     d <- runTestIsosceles n
     return $ a && b && c && d
     
--- Result: All the tests return true
+{-|
+  Execution:
+  *Lab2> runTriangleTests 10000
+
+  Result:
+  True
+
+  The execution will generate 10000 tests for each type of triangle, so it will perform 40000 tests in total.
+  Every exection of the runTriangleTests returns true, thus all triangle properties are valid.
+-}
 
 
-{-- Assignment 3 --}
+{---------- Assignment 3 ----------}
 
 -- Testing properties strength 1h30
 
@@ -186,7 +204,7 @@ firstExercise :: Int -> Bool
 firstExercise x = (even x && x > 3)
 
 secondExercise :: Int -> Bool
-secondExercise x = (even x || x > 3)
+secondExercise x = (even x || x > 3)
 
 thirdExercise :: Int -> Bool
 thirdExercise x = (firstExercise x || even x)
@@ -194,7 +212,7 @@ thirdExercise x = (firstExercise x || even x)
 quicksortStronger :: (Num a1, Enum a1) => [(a2, a1 -> Bool)] -> [(a2, a1 -> Bool)]
 quicksortStronger [] = []
 quicksortStronger (x:xs) =
-   quicksortStronger [ p | p <- xs, stronger [-10..10] (snd p) (snd x)]
+   quicksortStronger [ p | p <- xs, stronger [-10..10] (snd p) (snd x)]
    ++ [x]
    ++ quicksortStronger [ q | q <- xs, weaker [-10..10] (snd q) (snd x)]
 
@@ -202,10 +220,19 @@ printQuicksortStronger :: [String]
 printQuicksortStronger =
     map fst $ quicksortStronger [("first",firstExercise), ("second",secondExercise), ("third",thirdExercise)]
 
--- The result is: ["first","third","second"].
+{-|
+  Execution:
+  *Lab2> printQuicksortStronger
+
+  Result:
+  ["first", "third", "second"]
+
+  So, the result shows that the first predicate is the strongest one, followed by the third predicate.
+  The weakest one is the second predicate.
+-}
 
 
-{-- Assignment 4 --}
+{---------- Assignment 4 ----------}
 
 -- Permutation 1h
 isPermutation :: Ord a => [a] -> [a] -> Bool
@@ -218,24 +245,65 @@ doPermutation xs
   | (length xs == 1) = xs
   | otherwise = head(tail (permutations xs))
 
-doTestPermutation = testR 1 100 doPermutation isPermutation -- Everything is correct; result is True
+doTestPermutation = testR 1 100 doPermutation isPermutation
+
+{-|
+  Execution:
+  *Lab2> doTestPermutation
+
+  Result:
+  "100 tests passed"
+
+  The result of the execution shows each individual test it passed and at the end it states how many tests were actually passed. 
+  Every execution of the doTestPermutation method, it passes all the tests, so it can be concluded that the isPermutation method is working correclty.
+-}
 
 
-{-- Assignment 5 --}
+{---------- Assignment 5 ----------}
 
 isDerangement :: (Eq a, Ord a) => [a] -> [a] -> Bool
 isDerangement xs ys = isPermutation xs ys && forall (zip xs ys) (\(x, y) -> x /= y)
 
+{-|
+  Execution:
+  *Lab2> isDerangement [0,1,2,3] [3,2,1,0]
+
+  Result:
+  True
+
+  The results show that the second list is a derangement of the first list.
+-}
+
 deran :: (Eq a, Ord a) => [a] -> [[a]]
 deran xs = filter (isDerangement xs) (permutations xs)
+
+{-|
+  Execution:
+  *Lab2> deran [0,1,2,3]
+
+  Result:
+  [[3,2,1,0],[2,3,1,0],[1,2,3,0],[3,0,1,2],[1,3,0,2],[1,0,3,2],[3,2,0,1],[2,3,0,1],[2,0,3,1]]
+
+  The deran method returns all the permutations of the provided list which are also a derangement of it.
+-}
+
 deranI :: [Integer] -> [[Integer]]
 deranI = deran  -- Type the function because otherwise QuickCheck does not know what to do.
 testDeran = quickCheckResult (\xs -> length xs <= 5 --> (foldr (&&) True $ map (isDerangement xs) (deranI xs)))
 
--- Result: The test succeeds
+{-|
+  Execution:
+  testDeran
+
+  Result:
+  +++ OK, passed 100 tests.
+  Success {numTests = 100, numDiscarded = 0, labels = fromList [([],100)], classes = fromList [], tables = fromList [], output = "+++ OK, passed 100 tests.\n"}
+
+  The execution always passes the tests of quickCheck, therefore the deran function is valid.
+-}
 
 
-{-- Assignment 6 --}
+{---------- Assignment 6 ----------}
 
 -- Use the ASCII codes to compute the +13 character.
 rot13 :: String -> String
@@ -245,6 +313,16 @@ rot13 s = map f s
               | isLetter c              = chr (((ord c - 97 + 13) `mod` 26) + 97)
               | otherwise               = c
 
+{-|
+  Execution:
+  *Lab2> rot13 "this is a test 123"
+
+  Result:
+  "guvf vf n grfg 123"
+
+  The result of the execution is a string with the +13th character for each letter in the input string.
+-}
+
 testRot13 :: String -> Bool
 testRot13 s = rot13 (rot13 s) == s
 
@@ -252,9 +330,20 @@ autoTestRot13 :: IO Result
 autoTestRot13 = quickCheckResult testRot13
 
 -- Result: The test succeeds
+{-|
+  Execution:
+  *Lab2> autoTestRot13
+
+  Result:
+  +++ OK, passed 100 tests.
+  Success {numTests = 100, numDiscarded = 0, labels = fromList [([],100)], classes = fromList [], tables = fromList [], output = "+++ OK, passed 100 tests.\n"}
+
+  The execution tests if twice the rot13 of the sample string is equal to the original string.
+  It will always pass the tests, so the rot13 method is valid.
+-}
 
 
-{-- Assignment 7 --}
+{---------- Assignment 7 ----------}
 
 iban :: String -> Bool
 iban = ibanStep4 . ibanStep3 . ibanStep2 . ibanStep1
@@ -273,6 +362,16 @@ ibanStep3 = read
 ibanStep4 :: Integer -> Bool
 ibanStep4 x = x `mod` 97 == 1 -- Check whether the modulo of the int equals 1
 
+{-|
+  Execution:
+  *Lab2> iban "AT483200000012345864"
+
+  Result:
+  True
+
+  The execution will return a boolean based on whether the iban is a valid one or not.
+  In the above case it is a valid iban, so it returns true.
+-}
 
 ibanTestSet, ibanWrongTestSet :: [String]
 ibanTestSet = ["AT483200000012345864", "NL79INGB0001611514", "BH02CITI00001077181611", "BG18RZBB91550123456789", "HR1723600001101234565", "DE91100000000123456789", "GB82WEST12345698765432", "GL8964710123456789", "LU120010001234567891", "ES7921000813610123456789"]
@@ -281,4 +380,15 @@ testIban, testWrongIban :: Bool
 testIban = foldr (&&) True (map iban ibanTestSet) -- Test iban for all elements in the test set
 testWrongIban = foldr (&&) True (map (not . iban) ibanWrongTestSet)
 
--- Result: All the (preprogrammed) tests succeed.
+{-|
+  Execution:
+  *Lab2> testIban
+  *Lab2> testWrongIban
+
+  Result:
+  True
+  True
+
+  The execution will return a boolean based on whether all tests are correct to the validness of the iban.
+  The ibans are pre-generated in two list, one with valid ibans and one with invalid ones.
+-}
