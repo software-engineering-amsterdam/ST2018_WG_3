@@ -23,6 +23,43 @@ probs n = do
 
 data Shape = NoTriangle | Equilateral 
            | Isosceles  | Rectangular | Other deriving (Eq,Show)
+           
+-- From the lecture
+
+getIntL :: Int -> Int -> IO [Int]
+getIntL _ 0 = return []
+getIntL k n = do
+  x <-  getRandomInt k
+  y <- randomFlip x
+  xs <- getIntL k (n-1)
+  return (y:xs)
+
+genIntList :: IO [Int]
+genIntList = do
+  k <- getRandomInt 20
+  n <- getRandomInt 10
+  getIntL k n
+
+randomFlip :: Int -> IO Int
+randomFlip x = do
+   b <- getRandomInt 1
+   if b==0 then return x else return (-x)
+
+getRandomInt :: Int -> IO Int
+getRandomInt n = getStdRandom (randomR (0,n))
+
+getRandomInt' n = getStdRandom (randomR (-n,n))
+
+testR :: Int -> Int -> ([Int] -> [Int])
+                   -> ([Int] -> [Int] -> Bool) -> IO ()
+testR k n f r = if k == n then print (show n ++ " tests passed")
+               else do
+                 xs <- genIntList
+                 print ("doing " ++ show xs)
+                 if r xs (f xs) then
+                   do print ("pass on: " ++ show xs)
+                      testR (k+1) n f r
+                 else error ("failed test on: " ++ show xs)
 
 
 {-- Assignment 1 --}
@@ -140,8 +177,6 @@ runTriangleTests n = do
 {-- Assignment 3 --}
 
 -- Testing properties strength 1h30
-forall :: [a] -> (a -> Bool) -> Bool
-forall = flip all
 
 stronger, weaker :: [a] -> (a -> Bool) -> (a -> Bool) -> Bool
 stronger xs p q = forall xs (\x -> p x --> q x)
@@ -188,10 +223,10 @@ doTestPermutation = testR 1 100 doPermutation isPermutation -- Everything is cor
 
 {-- Assignment 5 --}
 
-isDerangement :: Eq a => [a] -> [a] -> Bool
+isDerangement :: (Eq a, Ord a) => [a] -> [a] -> Bool
 isDerangement xs ys = isPermutation xs ys && forall (zip xs ys) (\(x, y) -> x /= y)
 
-deran :: Eq a => [a] -> [[a]]
+deran :: (Eq a, Ord a) => [a] -> [[a]]
 deran xs = filter (isDerangement xs) (permutations xs)
 deranI :: [Integer] -> [[Integer]]
 deranI = deran  -- Type the function because otherwise QuickCheck does not know what to do.
@@ -231,9 +266,6 @@ ibanStep2 :: String -> String -- Replace letters with two digits
 ibanStep2 s = concat $ map f s
     where f c | isDigit c = [c]
               | otherwise = show (ord c - 55)
-
-ibanStep3 :: String -> Integer -- Interprets the string as an int
-ibanStep3 = read
 
 ibanStep3 :: String -> Integer -- Interprets the string as an int
 ibanStep3 = read
