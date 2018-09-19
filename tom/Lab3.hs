@@ -119,7 +119,7 @@ flatten (Cnj xs) = Cnj (map flatten (filter (not . isCnj) xs
                            ++ (concat conjunctions)))
     where unwrap (Cnj x) = x
           conjunctions = (map unwrap (filter (isCnj) xs))
-flatten (Neg f) = flatten f
+flatten (Neg f) = Neg (flatten f)
 flatten f = f
 
 -- Applies the distributive law until the formula does not change anymore.
@@ -153,7 +153,7 @@ testToCNF = do
     putStrLn ("Testing formula: " ++ show form)
     cnf <- return $ toCNF form
     putStrLn ("CNF: " ++ (show cnf))
-    result <- return $ isCNF cnf
+    result <- return $ isCNF cnf && equiv form cnf
     putStrLn ("Result: " ++ show result)
     return $ result
 
@@ -163,3 +163,5 @@ runTestToCNF = do
     putStrLn "--------------------------"
     putStrLn ("Combined test result: " ++ show result)
     
+
+{-- Assignment 4 --}
