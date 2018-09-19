@@ -164,4 +164,14 @@ runTestToCNF = do
     putStrLn ("Combined test result: " ++ show result)
     
 
-{-- Assignment 4 --}
+{-- Assignment 4 (0h) --}
+
+{--
+
+Basically I already did this in the previous exercises as part of a TDD workflow.
+The runTestToCNF function performs 100 tests of the toCNF function, where it checks
+whether the resulting formula is in CNF and whether it is equivalent to the input
+formula. When running this test function, the overall test result is True, meaning
+that all 100 of the tests have succeeded.
+
+--}
