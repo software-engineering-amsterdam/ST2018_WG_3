@@ -23,7 +23,7 @@ tautology :: Form -> Bool
 tautology f = all (\ v -> evl v f) (allVals f) -- Like satisfiable but with all instead of any
 
 
-
+-- All valuations that satisfy the formula.
 satValuations :: Form -> [Valuation]
 satValuations f = filter (\v -> evl v f) (allVals f)
 
@@ -39,20 +39,22 @@ entails :: Form -> Form -> Bool
 entails f1 f2 = satValuations f1 `isSublist` satValuations f2
 
 -- | logical equivalence
+-- Is equivalent to entailment in both ways.
 equiv :: Form -> Form -> Bool
 equiv f1 f2 = entails f1 f2 && entails f2 f1
 
 
 {-- Assignment 2 (45m) --}
 
+-- genForm generates a random formula to be used in testing.
 pick :: Int -> IO Int
 pick n = getStdRandom (randomR (0,n))
 genForm :: IO Form
 genForm = do
-    c <- pick 8
-    x <- pick 5
-    f1 <- if c > 3 then genForm else return (Prop 0)
-    f2 <- if c > 4 then genForm else return (Prop 0)
+    c <- pick 8  -- A number to determine the type of node.
+    x <- pick 5  -- An x for when the node is a proposition.
+    f1 <- if c > 3 then genForm else return (Prop 0) -- A child node (only generated if needed)
+    f2 <- if c > 4 then genForm else return (Prop 0) -- Another child node (only generated if needed)
     return $ case c of
                  c | c <= 3 -> Prop x
                  4          -> Neg f1
@@ -61,34 +63,39 @@ genForm = do
                  7          -> Impl f1 f2
                  8          -> Equiv f1 f2
 
+-- Sometimes formulas are too complex to transform within reasonable time, so
+-- with this function we can limit the AST depth.
 limitFormDepth :: Int -> Form -> Form
 limitFormDepth limit form = lfd' 0 form
     where lfd' :: Int -> Form -> Form
           lfd' depth (Prop x) = Prop x
           lfd' depth (Neg f) | depth < limit = Neg (lfd' (depth+1) f)
-                             | otherwise     = Prop 3
+                             | otherwise     = Prop 1
           lfd' depth (Cnj xs) | depth < limit = Cnj (map (lfd' (depth+1)) xs)
-                              | otherwise     = Prop 3
+                              | otherwise     = Prop 2
           lfd' depth (Dsj xs) | depth < limit = Dsj (map (lfd' (depth+1)) xs)
                               | otherwise     = Prop 3
           lfd' depth (Impl f g) | depth < limit = Impl (lfd' (depth+1) f) (lfd' (depth+1) g)
-                                | otherwise     = Prop 3
+                                | otherwise     = Prop 4
           lfd' depth (Equiv f g) | depth < limit = Equiv (lfd' (depth+1) f) (lfd' (depth+1) g)
-                                 | otherwise     = Prop 3
+                                 | otherwise     = Prop 5
                  
+-- Performs a single test of the parse function
 testParse :: IO Bool
 testParse = do
     form <- genForm
     str <- return $ show form
     return $ form `elem` parse str
-                 
+ 
+-- Runs a test with n different inputs.
 runTest :: IO Bool -> Integer -> IO Bool
 runTest _ 0 = return True
 runTest f n = do
     result <- f
     recurse <- runTest f (n-1)
     return $ result && recurse
-                 
+
+-- Tests the parse test function for 1000 different inputs.
 runTestParse :: IO Bool
 runTestParse = runTest testParse 1000
 
@@ -104,7 +111,7 @@ distLaw (Cnj fs) = Cnj (map distLaw fs)
 distLaw (Dsj fs) = Dsj (map distLaw fs)
 distLaw x = x
 
--- Flattens conjunctions and disjunctions
+-- Flattens conjunctions and disjunctions, so (Dsj [Dsj [...], ...]) becomes (Dsj [......])
 isDsj, isCnj :: Form -> Bool
 isDsj (Dsj _) = True
 isDsj _ = False
@@ -135,11 +142,15 @@ repeatedFlatten = repeatedLaw flatten
 toCNF :: Form -> Form
 toCNF = arrowfree # nnf # repeatedDistLaw # repeatedFlatten
 
+-- Checks if something is a CNF by checking if it consists of clauses
 isCNF :: Form -> Bool
 isCNF (Cnj xs) = foldr (\x r -> isClause x && r) True xs
 isCNF x = isClause x
+-- Checks if something is a clause by checking if it consists of literals.
 isClause (Dsj xs) = foldr (\x r -> isLiteral x && r) True xs
 isClause x = isLiteral x
+-- Checks if something is a literal by checking if it is a proposition,
+-- optionally embedded in a negation.
 isLiteral (Prop _) = True
 isLiteral (Neg x) = isLiteral x
 isLiteral _ = False
