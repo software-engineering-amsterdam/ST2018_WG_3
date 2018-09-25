@@ -45,7 +45,7 @@ checkParse f = (show $ head $ parse f) == f
     *Lab3> nnf testNNF
     +(-1 -2)
 -}
-
+{--
 distributionLaw :: Form -> Form
 distributionLaw (Dsj (Prop x Cnj (f2:f3))) = Cnj (Dsj (x f2) Dsj (x f3)) 
 distributionLaw (Prop x) = Prop x 
@@ -54,4 +54,4 @@ distributionLaw (Cnj fs) = Cnj (map distributionLaw fs)
 distributionLaw (Dsj fs) = Dsj (map distributionLaw fs)
 
 toCNF :: Form -> Form
-toCNF = arrowfree # nnf
+toCNF = arrowfree # nnf--}
