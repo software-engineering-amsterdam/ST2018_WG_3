@@ -32,10 +32,10 @@ parser function and will out lets say (2). So if (1) == (2) the test will be suc
 -}
 
 
-workShow :: [Char] -> [Form]
+workShow :: [Char] -> [Char]
 workShow m = show m --give an expression
 
-workParse :: [Form] -> Bool
+workParse :: [Char] -> Bool
 workParse g =  head (parse workShow g) == g
 
 {-
