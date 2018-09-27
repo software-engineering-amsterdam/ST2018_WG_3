@@ -153,6 +153,14 @@ trClos xs = repeatedLaw (\x -> nub (x ++ x @@ xs)) xs
 
 {-- Assignment 7 --}
 
+-- Whether xs is a sublist of ys (From Lab3)
+isSublist :: Eq a => [a] -> [a] -> Bool
+isSublist [] ys = True
+isSublist xs [] = False
+isSublist (x:xs) ys | x `elem` ys = isSublist xs (delete x ys)
+                    | otherwise   = False
+
+
 -- Test symClos
 prop_symClos :: Ord a => Rel a -> Bool
 prop_symClos r = let rsym = symClos r
@@ -160,5 +168,43 @@ prop_symClos r = let rsym = symClos r
                   && forAll rsym (\x -> swap x `elem` r || x `elem` r) -- Every element in the rsym exists (inverted or normal) in the original r
                   
 -- Test trClos
-prop_trClos :: Ord a => Rel a -> Bool
-prop_trClos r = undefined
+prop_trClos :: Rel Int -> Bool -- TODO: Revert back to generalized type
+prop_trClos r = let rclos = trClos r
+                    transitiveChecks :: [Bool]
+                    transitiveChecks = [ ((a, c) `elem` rclos) | (a, b) <- rclos, (c, d) <- rclos, b == c ]
+                in  (nub r) `isSublist` (nub rclos) -- Check if r is subset of rclos
+                 && foldr (&&) True transitiveChecks -- Check transitive property of rclos
+                 
+-- Custom testing method
+
+generateRel :: IO (Rel Int)
+generateRel = do
+    a <- pick 100
+    b <- pick 100
+    h <- return $ (a, b)
+    done <- pick 5
+    t <- if done > 0 then generateRel else return (h : [])
+    return (h : t)
+
+testSymClos :: IO Bool
+testSymClos = do
+    r <- generateRel
+    result <- return $ prop_symClos r
+    putStrLn $ "Test result " ++ (show result) ++ " for r = " ++ (show r)
+    return result
+    
+testTrClos :: IO Bool
+testTrClos = do
+    r <- generateRel
+    result <- return $ prop_trClos r
+    putStrLn $ "Test result " ++ (show result) ++ " for r = " ++ (show r)
+    return result
+    
+runTestSymClos, runTestTrClos :: IO Bool
+runTestSymClos = runTest testSymClos 100
+runTestTrClos = runTest testTrClos 100
+
+
+-- With QuickCheck
+qcSymClos = quickCheck (prop_symClos :: Rel Int -> Bool)
+qcTrClos = quickCheck (prop_trClos :: Rel Int -> Bool)
