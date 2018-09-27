@@ -45,13 +45,27 @@ checkParse f = (show $ head $ parse f) == f
     *Lab3> nnf testNNF
     +(-1 -2)
 -}
-{--
+
 distributionLaw :: Form -> Form
-distributionLaw (Dsj (Prop x Cnj (f2:f3))) = Cnj (Dsj (x f2) Dsj (x f3)) 
-distributionLaw (Prop x) = Prop x 
+distributionLaw (Dsj (f1:Cnj (f2:f3:_):_)) = Cnj[ Dsj [f1, f2], Dsj [f1, f3]]
+distributionLaw (Dsj (Cnj (f2:f3:_):f1:_)) = Cnj[ Dsj [f1, f2], Dsj [f1, f3]]
 distributionLaw (Neg f) = Neg (distributionLaw f)
 distributionLaw (Cnj fs) = Cnj (map distributionLaw fs)
 distributionLaw (Dsj fs) = Dsj (map distributionLaw fs)
+distributionLaw x = x
+
+repetitiveLaw form = if form == new then form
+    else repetitiveLaw new
+    where new = distributionLaw form
+
+flatten :: Form -> Form
+flatten (Cnj (Cnj f1:Cnj f2:f3)) = Cnj(map flatten $ f1++f2++f3)
+flatten (Neg f) = Neg (flatten f)
+flatten (Cnj fs) = Cnj (map flatten fs)
+flatten (Dsj fs) = Dsj (map flatten fs)
+flatten x = x
 
 toCNF :: Form -> Form
-toCNF = arrowfree # nnf--}
+toCNF = arrowfree # nnf # repetitiveLaw
+
+bla = head $ parse "*(*(+(-1 1) +(-1 2)) *(+(-2 1) +(-2 2)) *(+(-1 1) +(-1 2)) *(+(-2 1) +(-2 2)))"
