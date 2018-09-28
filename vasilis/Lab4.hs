@@ -9,8 +9,12 @@ import Test.QuickCheck
 
 type Rel a = [(a,a)]
 
+{- maps conn to list of tuples a and added to the given list of tuples
+conn inverts each tuple. (1,2) to (2,1)
+nub removes the duplicates example given list [(1,2),(3,3)] turned into [(1,2),(2,1),(3,3)] and not to [(1,2),(2,1),(3,3),(3,3)]
+-}
 symClos :: Ord a => Rel a -> Rel a
-symClos a =nub (a ++ map (conn) a) -- (\x y -> fst x /= snd y)
+symClos a =nub (a ++ map (conn) a) 
      where conn (first, second) = (second, first)
      
    
