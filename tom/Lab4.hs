@@ -208,3 +208,23 @@ runTestTrClos = runTest testTrClos 100
 -- With QuickCheck
 qcSymClos = quickCheck (prop_symClos :: Rel Int -> Bool)
 qcTrClos = quickCheck (prop_trClos :: Rel Int -> Bool)
+
+
+{-- Assignment 8 --}
+
+-- We can test this with QuickCheck
+
+testDiffTCvTCSC :: Rel Int -> Bool
+testDiffTCvTCSC r = trClos (symClos r) == symClos (trClos r)
+
+quickCheckDiffTCvTCSC :: IO ()
+quickCheckDiffTCvTCSC = quickCheck testDiffTCvTCSC
+
+{--
+Falsifiable with input [(0,1)].
+The transitive closure of the symmetric closure of r is not equal to the symmetric closure
+of the transitive closure of r. This is because first taking the symmetric closure creates
+cyclic relations in the graph, which after taking the transitive closure result in
+reflexivity, something that does not happen when you take the symmetric closure after the
+transitive closure.
+--}
