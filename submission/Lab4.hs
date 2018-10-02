@@ -165,7 +165,7 @@ prop_symClos r = let rsym = symClos r
                   && forAll rsym (\x -> swap x `elem` r || x `elem` r) -- Every element in the rsym exists (inverted or normal) in the original r
 
 -- Test trClos
-prop_trClos :: Rel Int -> Bool -- TODO: Revert back to generalized type
+prop_trClos :: Ord a => Rel a -> Bool
 prop_trClos r = let rclos = trClos r
                     transitiveChecks :: [Bool]
                     transitiveChecks = [ ((a, c) `elem` rclos) | (a, b) <- rclos, (c, d) <- rclos, b == c ]
