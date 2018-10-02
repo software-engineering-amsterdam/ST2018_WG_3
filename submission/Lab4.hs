@@ -26,9 +26,9 @@ generateSetInt = do
 
 -- With QuickCheck
 
-instance (Ord a, Arbitrary a) => Arbitrary (Set a) where
+instance (Ord a, Arbitrary a, Num a) => Arbitrary (Set a) where
     arbitrary = do
-        h <- arbitrary
+        (Positive h) <- arbitrary :: (Ord a, Arbitrary a, Num a) => Gen (Positive a)
         done <- choose (0,5) :: Gen Int
         t <- if done > 0 then arbitrary else return emptySet
         return $ insertSet h t
@@ -127,7 +127,7 @@ nub removes duplicates (used from lab's html)
 maps every tuple of the list a with the rev function and adds it on the list of tuples, a
 -}
 symClos :: Ord a => Rel a -> Rel a
-symClos a =nub (a ++ map (rev) a) 
+symClos a = nub (a ++ map (rev) a) 
      where rev (first, second) = (second, first)
      
      
