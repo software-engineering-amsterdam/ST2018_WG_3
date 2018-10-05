@@ -182,7 +182,7 @@ keepSearching rel1 rel2 = if (nub(rel1++(rel1@@rel2)) == nub(rel1++rel2))
   else keepSearching (rel1++(rel1@@rel2)) rel2
 
 
------ Testing both functions (symClos && trClos)  35mins + (10:00) -----
+----- Testing both functions (symClos && trClos)  1h50-----
 generateRel :: IO (Rel Int)
 generateRel = do
  n1 <- randomNumber 10
