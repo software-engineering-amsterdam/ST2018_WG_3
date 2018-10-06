@@ -10,7 +10,6 @@ import System.Random
 --Assignment 1 --
 --Time spent: 16h--
 
-
 type Row    = Int 
 type Column = Int 
 type Value  = Int
