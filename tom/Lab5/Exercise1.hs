@@ -1,4 +1,4 @@
-module Lab51 where
+module Exercise1 where
 
 import Data.List
 import Data.Tuple
@@ -22,7 +22,7 @@ exampleX = [[0,0,0,3,0,0,0,0,0],
 exampleXF :: Grid
 exampleXF = [[0,0,0,3,0,0,0,0,0],
              [0,0,0,7,0,0,3,0,0],
-             [2,0,0,0,0,0,0,0,8],
+             [2,0,7,0,0,0,0,0,8],
              [0,0,6,0,0,5,0,0,0],
              [0,9,1,6,0,0,0,0,0],
              [3,0,0,0,7,1,2,0,0],
