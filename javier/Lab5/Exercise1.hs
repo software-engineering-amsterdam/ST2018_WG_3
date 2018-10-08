@@ -117,3 +117,7 @@ exampleXX = [[0,0,0,0,9,0,0,0,1],
             [0,7,0,0,0,0,0,5,0],
             [0,0,0,0,0,4,7,0,0],
             [4,0,3,0,0,0,9,0,0]]
+
+doExampleX :: IO [()]
+doExampleX = do
+  solveAndShowExtra exampleX

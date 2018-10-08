@@ -9,7 +9,7 @@ import System.Random
 import Test.QuickCheck
 
 
---------- Exercise 2 45min m---------
+--------- Exercise 2 1h---------
 type Position = (Row,Column)
 type Constrnt = [[Position]]
 
@@ -18,11 +18,13 @@ columnConstrnt = [[(r,c)| r <- values ] | c <- values ]
 blockConstrnt = [[(r,c)| r <- b1, c <- b2 ] | b1 <- blocks, b2 <- blocks ]
 constrnt = nub (rowConstrnt ++ columnConstrnt ++ blockConstrnt)
 
-freeAtPos :: Sudoku -> Position -> Constrnt -> [Value]
+{--freeAtPos :: Sudoku -> Position -> Constrnt -> [Value]
 freeAtPos s (r,c) xs = let
-   ys = filter (elem (r,c)) xs
- in
-   foldl1 intersect (map ((values \\) . map s) ys)
+    ys = filter (elem (r,c)) xs in foldl1 intersect (map ((values \\) . map s) ys)
+        if ((length ys) == 0) then
+            return [1..9]
+        else
+            return ys--}
 
 constraints :: Sudoku -> [Constraint]
 constraints s = sortBy length3rd
