@@ -1,5 +1,5 @@
 --------- Javier Bermejo Razquin -----------
-module Exercise1
+module Exercise2
 
 where
 
@@ -9,7 +9,7 @@ import System.Random
 import Test.QuickCheck
 
 
---------- Exercise 2 30min ---------
+--------- Exercise 2 45min m---------
 type Position = (Row,Column)
 type Constrnt = [[Position]]
 
