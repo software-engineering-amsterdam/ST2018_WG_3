@@ -1,4 +1,4 @@
-module Lab5 where
+module Lab51 where
 
 import Data.List
 import Data.Tuple
@@ -6,7 +6,7 @@ import System.Random
 import Test.QuickCheck hiding (forAll)
 import Lecture5
 
-{-- Assignment 1 --}
+{-- Assignment 1 (~5h) --}
 
 exampleX :: Grid
 exampleX = [[0,0,0,3,0,0,0,0,0],

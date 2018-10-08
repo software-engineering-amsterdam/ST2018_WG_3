@@ -11,6 +11,13 @@ type Column = Int
 type Value  = Int
 type Grid   = [[Value]]
 
+type Position = (Row,Column)
+type Constrnt = [[Position]]
+
+rowConstrnt = [[(r,c)| c <- values ] | r <- values ]
+columnConstrnt = [[(r,c)| r <- values ] | c <- values ]
+blockConstrnt = [[(r,c)| r <- b1, c <- b2 ] | b1 <- blocks, b2 <- blocks ]
+
 positions, values :: [Int]
 positions = [1..9]
 values    = [1..9] 
@@ -84,7 +91,7 @@ freeInColumn s c =
 freeInSubgrid :: Sudoku -> (Row,Column) -> [Value]
 freeInSubgrid s (r,c) = freeInSeq (subGrid s (r,c))
 
-freeAtPos :: Sudoku -> (Row,Column) -> [Value]
+freeAtPos :: Sudoku -> Position -> Constrnt -> [Value]
 freeAtPos s (r,c) = 
   (freeInRow s r) 
    `intersect` (freeInColumn s c) 
