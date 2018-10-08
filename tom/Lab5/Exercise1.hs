@@ -4,7 +4,9 @@ import Data.List
 import Data.Tuple
 import System.Random
 import Test.QuickCheck hiding (forAll)
+import System.TimeIt
 import Lecture5
+
 
 {-- Assignment 1 (~5h) --}
 
@@ -115,3 +117,32 @@ succNodeX (s,p:ps) = extendNodeX (s,ps) p
 
 solveNsX :: [Node] -> [Node]
 solveNsX = search succNodeX solved 
+
+
+-- Testing performance: (for assignment 2)
+
+randomProblem :: IO Node
+randomProblem = do [r] <- rsolveNs [emptyN]
+                   genProblem r
+
+perfTest :: IO Double
+perfTest = do
+    ts <- perfTest' 30
+    return $ average ts
+
+perfTest' :: Int -> IO [Double]
+perfTest' n = do
+    t <- perfTestSingle
+    ts <- if n > 0 then perfTest' (n-1) else return []
+    return (t : ts)
+
+perfTestSingle :: IO Double
+perfTestSingle = do
+    r <- randomProblem
+    showNode r
+    (t, _) <- timeItT (solveShowNs [r])
+    putStrLn (show t)
+    return t
+
+average :: [Double] -> Double
+average xs = sum xs / fromIntegral (length xs)

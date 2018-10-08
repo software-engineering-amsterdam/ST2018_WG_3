@@ -4,8 +4,52 @@ import Data.List
 import Data.Tuple
 import System.Random
 import Test.QuickCheck hiding (forAll)
+import System.TimeIt
 
 {-- Assignment 2 --}
+
+{--
+The code has been refactored.
+This version is much easier to extend to include NRC sudokus, because the only
+thing that needs to change is the `constrnts` list. If the NRC constraint is
+added in there, it is automatically accounted for. In exercise 1, a lot of functions
+needed to be modified to be able to work with the new constraint and it was often unclear
+which functions needed to be redone.
+To test the time performance of these approaches, the TimeIt library is used. The custom
+function `perfTest` generated 30 random (satisfiable) sudokus and solves them using the
+solver algorithm. The durations are averaged, giving the following results:
+
+A1: 0.0514s
+A2: 12.2s
+
+--}
+
+
+-- Testing performance:
+
+perfTest :: IO Double
+perfTest = do
+    ts <- perfTest' 30
+    return $ average ts
+
+perfTest' :: Int -> IO [Double]
+perfTest' n = do
+    t <- perfTestSingle
+    ts <- if n > 0 then perfTest' (n-1) else return []
+    return (t : ts)
+
+perfTestSingle :: IO Double
+perfTestSingle = do
+    r <- randomProblem
+    showNode r
+    (t, _) <- timeItT (solveShowNs [r])
+    putStrLn (show t)
+    return t
+
+average :: [Double] -> Double
+average xs = sum xs / fromIntegral (length xs)
+
+-- The system:
 
 type Row    = Int 
 type Column = Int 
@@ -383,3 +427,6 @@ main = do [r] <- rsolveNs [emptyN]
           s  <- genProblem r
           showNode s
 
+randomProblem :: IO Node
+randomProblem = do [r] <- rsolveNs [emptyN]
+                   genProblem r
