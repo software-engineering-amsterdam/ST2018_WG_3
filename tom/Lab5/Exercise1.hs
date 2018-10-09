@@ -121,9 +121,41 @@ solveNsX = search succNodeX solved
 
 -- Testing performance: (for assignment 2)
 
-randomProblem :: IO Node
-randomProblem = do [r] <- rsolveNs [emptyN]
-                   genProblem r
+genProblemX :: Node -> IO Node
+genProblemX n = do ys <- randomize xs
+                   return (minimalizeX n ys)
+   where xs = filledPositions (fst n)
+   
+uniqueSolX :: Node -> Bool
+uniqueSolX node = singleton (solveNsX [node]) where 
+  singleton [] = False
+  singleton [x] = True
+  singleton (x:y:zs) = False
+   
+minimalizeX :: Node -> [(Row,Column)] -> Node
+minimalizeX n [] = n
+minimalizeX n ((r,c):rcs) | uniqueSolX n' = minimalizeX n' rcs
+                          | otherwise     = minimalizeX n  rcs
+  where n' = eraseNX n (r,c)
+
+eraseNX :: Node -> (Row,Column) -> Node
+eraseNX n (r,c) = (s, constraintsX s) 
+  where s = eraseS (fst n) (r,c) 
+
+randomProblemX :: IO Node
+randomProblemX = do [r] <- rsolveNsX [emptyNX]
+                    genProblemX r
+                    
+rsolveNsX :: [Node] -> IO [Node]
+rsolveNsX ns = rsearch rsuccNodeX solved (return ns)
+
+rsuccNodeX :: Node -> IO [Node]
+rsuccNodeX (s,cs) = do xs <- getRandomCnstr cs
+                       if null xs 
+                         then return []
+                         else return 
+                           (extendNodeX (s,cs\\xs) (head xs))
+
 
 perfTest :: IO Double
 perfTest = do
@@ -138,9 +170,9 @@ perfTest' n = do
 
 perfTestSingle :: IO Double
 perfTestSingle = do
-    r <- randomProblem
+    r <- randomProblemX
     showNode r
-    (t, _) <- timeItT (solveShowNs [r])
+    (t, _) <- timeItT (solveShowNsX [r])
     putStrLn (show t)
     return t
 
