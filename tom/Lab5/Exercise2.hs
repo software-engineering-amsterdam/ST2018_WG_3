@@ -6,7 +6,7 @@ import System.Random
 import Test.QuickCheck hiding (forAll)
 import System.TimeIt
 
-{-- Assignment 2 --}
+{-- Assignment 2 (~3h) --}
 
 {--
 The code has been refactored.
@@ -15,12 +15,12 @@ thing that needs to change is the `constrnts` list. If the NRC constraint is
 added in there, it is automatically accounted for. In exercise 1, a lot of functions
 needed to be modified to be able to work with the new constraint and it was often unclear
 which functions needed to be redone.
-To test the time performance of these approaches, the TimeIt library is used. The custom
-function `perfTest` generated 30 random (satisfiable) sudokus and solves them using the
-solver algorithm. The durations are averaged, giving the following results:
+To test the time performance of these approaches, the TimeIt library from Hackage is used.
+The custom function `perfTest` generated 30 random (satisfiable) sudokus and solves them
+using the solver algorithm. The durations are averaged, giving the following results:
 
 A1: 0.0514s
-A2: 12.2s
+A2: 26.1s (with very high variance)
 
 --}
 
