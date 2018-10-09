@@ -16,7 +16,7 @@ Example 1: Not minimal
 Example 2: Not minimal
 Example 3: Minimal
 Example 4: Not minimal
-Example 5: ?
+Example 5: Not minimal
 --}
 
 minimal :: Grid -> Bool
