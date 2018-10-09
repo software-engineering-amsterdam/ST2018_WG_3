@@ -19,7 +19,7 @@ To test the time performance of these approaches, the TimeIt library from Hackag
 The custom function `perfTest` generated 30 random (satisfiable) sudokus and solves them
 using the solver algorithm. The durations are averaged, giving the following results:
 
-A1: 0.0514s
+A1: 0.125
 A2: 26.1s (with very high variance)
 
 --}
