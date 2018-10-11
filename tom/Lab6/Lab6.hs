@@ -2,6 +2,7 @@ module Lab6 where
   
 import Data.List
 import Data.Tuple
+import Control.Monad
 import System.Random
 import Test.QuickCheck hiding (forAll)
 import Lecture6
@@ -41,12 +42,20 @@ compareExps x e n = do
   (time2, _) <- timeItT (putStrLn $ show $ expM x e n)
   return $ time1 < time2
   
-comparisons :: IO [Bool]
-comparisons = sequence $ map (uncurry3 compareExps)
-                             [(21234, 72239412, 301),
-                              (10333, 51827932, 279),
-                              (12513, 21676128, 212),
-                              (124951, 52178394, 315)]
+comparisons :: IO Bool
+comparisons = (liftM and) $ sequence $
+                  map (uncurry3 compareExps)
+                      [(21234, 72239412, 301),
+                       (10333, 51827932, 279),
+                       (12513, 21676128, 212),
+                       (124951, 52178394, 315)]
 
 uncurry3 :: (a -> b -> c -> d) -> (a, b, c) -> d
 uncurry3 f (a, b, c) = f a b c
+
+-- When running comparisons it returns true, because exM is
+-- faster than expM in all the test cases.
+
+
+{-- Assignment 3 --}
+
