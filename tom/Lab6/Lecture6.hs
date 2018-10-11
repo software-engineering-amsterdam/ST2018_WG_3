@@ -4,6 +4,7 @@ module Lecture6
 where 
 
 import System.Random
+import Data.List
 
 factorsNaive :: Integer -> [Integer]
 factorsNaive n0 = factors' n0 2 where 
@@ -112,7 +113,8 @@ expM x y = rem (x^y)
 
 exM :: Integer -> Integer -> Integer -> Integer
 exM x 0 n = rem 1 n
-exM x e n = rem (x * (exM x (e-1) n)) n
+exM x e n | odd e      = rem (x * (exM x (e-1) n)) n
+          | otherwise  = rem (exM x (e `div` 2) n ^ 2) n
 
 primeTestF :: Integer -> IO Bool
 primeTestF n = do 
