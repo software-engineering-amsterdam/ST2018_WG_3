@@ -111,6 +111,7 @@ expM ::  Integer -> Integer -> Integer -> Integer
 expM x y = rem (x^y)
 
 exM :: Integer -> Integer -> Integer -> Integer
+exM _ 0 n = rem 1 n
 exM x 1 n = rem x n
 exM x e n
   | odd e = (exM x (e - 1) n) * rem x n
