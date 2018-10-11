@@ -59,3 +59,14 @@ uncurry3 f (a, b, c) = f a b c
 
 {-- Assignment 3 --}
 
+{-- 
+
+See Lecture6.hs.
+
+Implementation is like this:
+
+composites :: [Integer]
+composites = filter (not.prime) [2..]
+
+
+--}
