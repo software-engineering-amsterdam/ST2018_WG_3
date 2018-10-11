@@ -4,7 +4,7 @@ import Data.List
 import System.Random
 import Lecture6
 
--- Question 1 (45min)
+-- Question 1 (1h)
 
 {-|
   My implementation:
@@ -15,3 +15,6 @@ import Lecture6
     | odd e = (exM x (e - 1) n) * (rem x n)
     | otherwise = rem ((exM x (e `div` 2) n)^2) n
 -}
+
+exM' :: Integer -> Integer -> Integer -> Integer
+exM' = expM -- to be replaced by a fast version

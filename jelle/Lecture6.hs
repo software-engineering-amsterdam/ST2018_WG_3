@@ -113,7 +113,7 @@ expM x y = rem (x^y)
 exM :: Integer -> Integer -> Integer -> Integer
 exM x 1 n = rem x n
 exM x e n
-  | odd e = (exM x (e - 1) n) * (rem x n)
+  | odd e = (exM x (e - 1) n) * rem x n
   | otherwise = rem ((exM x (e `div` 2) n)^2) n
 
 primeTestF :: Integer -> IO Bool
