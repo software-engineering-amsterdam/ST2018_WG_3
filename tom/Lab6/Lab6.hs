@@ -3,6 +3,9 @@ module Lab6 where
 import Data.List
 import Data.Tuple
 import Control.Monad
+import Control.Monad.Extra
+import Control.Arrow
+import Data.Maybe
 import System.Random
 import Test.QuickCheck hiding (forAll)
 import Lecture6
@@ -25,7 +28,8 @@ Implementation is like this:
 
 exM :: Integer -> Integer -> Integer -> Integer
 exM x 0 n = rem 1 n
-exM x e n = rem (x * (exM x (e-1) n)) n
+exM x e n | odd e      = rem (x * (exM x (e-1) n)) n
+          | otherwise  = rem (exM x (e `div` 2) n ^ 2) n
 
 --}
 
@@ -68,5 +72,18 @@ Implementation is like this:
 composites :: [Integer]
 composites = filter (not.prime) [2..]
 
-
 --}
+
+
+{-- Assignment 4 --}
+
+foolsCheck :: Integer -> Integer -> IO Bool
+foolsCheck k x = do
+  r <- primeTestsF (fromIntegral k) x
+  return $ r /= prime x
+
+firstFool :: Integer -> IO Integer
+firstFool k = do
+  r <- findM (foolsCheck k) [3..]
+  return $ fromJust r
+
