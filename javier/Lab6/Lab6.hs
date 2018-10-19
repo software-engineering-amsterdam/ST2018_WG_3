@@ -159,7 +159,7 @@ testsMRN n xs = do
 --- doTestsMR2 : 527519713969
 --- doTestsMR3 : 105950928237841
 --- doTestsMRN 4 : 37041433670517160249
---- doTestsMRN 5 : Toke too much timeItT
+--- doTestsMRN 5 : Toke too much time
 
 
 ------------- Exercise 6 (again) 35 mins -----------
